@@ -58,6 +58,11 @@ export default function Table({ onPressRow }: Props) {
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => <ItemRow item={item} onPress={() => onPressRow?.(item)} />}
         contentContainerStyle={styles.listContent}
+        ListEmptyComponent={
+          <View className="flex-1 justify-center items-center p-4">
+            <Text className="text-gray-500 text-lg">No items found</Text>
+          </View>
+        }
       />
     </View>
   );

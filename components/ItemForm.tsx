@@ -3,7 +3,6 @@ import { DEFAULT_ITEM_FORM_DATA, ItemFormData, ItemFormSchema } from "@/constant
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useCameraPermissions } from "expo-camera";
 import * as ImagePicker from "expo-image-picker";
-import React from "react";
 import { Controller, useForm } from "react-hook-form";
 import {
   Alert,
@@ -225,6 +224,7 @@ const styles = StyleSheet.create({
     padding: 16,
     paddingBottom: 0,
     gap: 12,
+    backgroundColor: "#fff",
   },
   label: {
     fontWeight: "600",
