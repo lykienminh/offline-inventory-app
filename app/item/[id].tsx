@@ -7,7 +7,10 @@ import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 export default function EditItemScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
-  const { items, update, remove } = useInventoryStore();
+  const items = useInventoryStore((state) => state.items);
+  const update = useInventoryStore((state) => state.update);
+  const remove = useInventoryStore((state) => state.remove);
+
   const [busy, setBusy] = useState(false);
 
   const item = useMemo(() => items.find((it) => it.id === id), [items, id]);

@@ -75,12 +75,12 @@ const useInventoryStore = create<ItemsState>()(
     {
       name: "inventory-storage",
       storage: createJSONStorage(() => AsyncStorage),
-      // partialize: (state) => ({
-      //   items: state.items,
-      //   sortBy: state.sortBy,
-      //   sortDir: state.sortDir,
-      //   search: state.search,
-      // }),
+      partialize: (state) => ({
+        items: state.items,
+        sortBy: state.sortBy,
+        sortDir: state.sortDir,
+        search: state.search,
+      }),
     }
   )
 );

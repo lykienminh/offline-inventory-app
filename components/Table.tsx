@@ -9,7 +9,11 @@ type Props = {
 };
 
 export default function Table({ onPressRow }: Props) {
-  const { items, sortBy, sortDir, setSort, search } = useInventoryStore();
+  const items = useInventoryStore((state) => state.items);
+  const sortBy = useInventoryStore((state) => state.sortBy);
+  const sortDir = useInventoryStore((state) => state.sortDir);
+  const setSort = useInventoryStore((state) => state.setSort);
+  const search = useInventoryStore((state) => state.search);
 
   const filteredSorted = useMemo(() => {
     const byName = (a: Item, b: Item) => a.name.localeCompare(b.name);

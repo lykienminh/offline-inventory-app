@@ -6,7 +6,7 @@ import { View } from "react-native";
 
 export default function NewItemScreen() {
   const router = useRouter();
-  const { add } = useInventoryStore();
+  const add = useInventoryStore((state) => state.add);
   const [busy, setBusy] = useState(false);
 
   const onSubmit = async (draft: Parameters<typeof add>[0]) => {
