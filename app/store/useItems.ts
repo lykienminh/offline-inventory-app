@@ -79,7 +79,6 @@ const useInventoryStore = create<ItemsState>()(
         items: state.items,
         sortBy: state.sortBy,
         sortDir: state.sortDir,
-        search: state.search,
       }),
     }
   )

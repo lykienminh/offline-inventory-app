@@ -13,7 +13,7 @@ export default function ItemRow({ item, onPress }: { item: Item; onPress?: () =>
 
       <View style={[styles.column, styles.categoryColumn]}>
         <Text style={[styles.text, styles.grayText]} numberOfLines={2}>
-          {item.category ?? "—"}
+          {item.category ?? ""}
         </Text>
       </View>
 

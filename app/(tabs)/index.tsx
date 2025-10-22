@@ -1,7 +1,7 @@
 import useInventoryStore from "@/app/store/useItems";
 import Table from "@/components/Table";
 import { useRouter } from "expo-router";
-import React from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { RefreshControl, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -10,6 +10,39 @@ export default function HomeScreen() {
   const [refreshing, setRefreshing] = React.useState(false);
   const search = useInventoryStore((state) => state.search);
   const setSearch = useInventoryStore((state) => state.setSearch);
+
+  // Local state for the input value
+  const [inputValue, setInputValue] = useState(search);
+  const debounceTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const debouncedSearch = useCallback(
+    (value: string) => {
+      if (debounceTimeoutRef.current) {
+        clearTimeout(debounceTimeoutRef.current);
+      }
+
+      debounceTimeoutRef.current = setTimeout(() => {
+        setSearch(value);
+      }, 500);
+    },
+    [setSearch]
+  );
+
+  const handleSearchChange = useCallback(
+    (value: string) => {
+      setInputValue(value);
+      debouncedSearch(value);
+    },
+    [debouncedSearch]
+  );
+
+  useEffect(() => {
+    return () => {
+      if (debounceTimeoutRef.current) {
+        clearTimeout(debounceTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const onRefresh = () => {
     setRefreshing(true);
@@ -37,8 +70,8 @@ export default function HomeScreen() {
 
           <TextInput
             placeholder="Search by name"
-            value={search}
-            onChangeText={setSearch}
+            value={inputValue}
+            onChangeText={handleSearchChange}
             style={styles.searchInput}
           />
 
