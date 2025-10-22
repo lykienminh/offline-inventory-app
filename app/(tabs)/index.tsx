@@ -1,3 +1,4 @@
+import useInventoryStore from "@/app/store/useItems";
 import Table from "@/components/Table";
 import { useRouter } from "expo-router";
 import React from "react";
@@ -7,7 +8,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 export default function HomeScreen() {
   const router = useRouter();
   const [refreshing, setRefreshing] = React.useState(false);
-  const [search, setSearch] = React.useState("");
+  const search = useInventoryStore((state) => state.search);
+  const setSearch = useInventoryStore((state) => state.setSearch);
 
   const onRefresh = () => {
     setRefreshing(true);
@@ -33,7 +35,12 @@ export default function HomeScreen() {
             </TouchableOpacity>
           </View>
 
-          <TextInput placeholder="Search by name" value={search} onChangeText={setSearch} style={styles.searchInput} />
+          <TextInput
+            placeholder="Search by name"
+            value={search}
+            onChangeText={setSearch}
+            style={styles.searchInput}
+          />
 
           <View style={styles.spacer} />
 
