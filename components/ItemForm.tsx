@@ -1,7 +1,10 @@
-import { Item } from "@/app/types";
+import { Draft } from "@/app/types";
+import { DEFAULT_ITEM_FORM_DATA, ItemFormData, ItemFormSchema } from "@/constants/item-form.schema";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useCameraPermissions } from "expo-camera";
 import * as ImagePicker from "expo-image-picker";
-import React, { useMemo, useState } from "react";
+import React from "react";
+import { Controller, useForm } from "react-hook-form";
 import {
   Alert,
   Image,
@@ -15,8 +18,6 @@ import {
   View,
 } from "react-native";
 
-type Draft = Omit<Item, "id" | "updatedAt">;
-
 export default function ItemForm({
   initial,
   onSubmit,
@@ -28,20 +29,24 @@ export default function ItemForm({
   submitLabel?: string;
   busy?: boolean;
 }) {
-  const [name, setName] = useState(initial?.name ?? "");
-  const [category, setCategory] = useState(initial?.category ?? "");
-  const [quantity, setQuantity] = useState(String(initial?.quantity ?? 1));
-  const [notes, setNotes] = useState(initial?.notes ?? "");
-  const [photoUri, setPhotoUri] = useState<string | undefined>(initial?.photoUri);
-  const [error, setError] = useState<string | null>(null);
   const [cameraPermission, requestCameraPermission] = useCameraPermissions();
 
-  const valid = useMemo(() => {
-    if (!name.trim()) return false;
-    const q = Number(quantity);
-    if (!Number.isFinite(q) || q < 0) return false;
-    return true;
-  }, [name, quantity]);
+  const {
+    control,
+    handleSubmit,
+    formState: { errors, isValid },
+    setValue,
+    watch,
+  } = useForm<ItemFormData>({
+    resolver: zodResolver(ItemFormSchema),
+    defaultValues: {
+      ...DEFAULT_ITEM_FORM_DATA,
+      ...initial,
+    },
+    mode: "onChange",
+  });
+
+  const watchedPhotoUri = watch("photoUri");
 
   const pickImage = async () => {
     try {
@@ -54,7 +59,10 @@ export default function ItemForm({
         mediaTypes: "images",
         quality: 0.7,
       });
-      if (!res.canceled) setPhotoUri(res.assets[0]?.uri);
+      if (!res.canceled) {
+        const uri = res.assets[0]?.uri;
+        setValue("photoUri", uri);
+      }
     } catch {
       Alert.alert("Image error", "Could not pick image. You can retry later.");
     }
@@ -72,25 +80,22 @@ export default function ItemForm({
       }
 
       const res = await ImagePicker.launchCameraAsync({ quality: 0.7 });
-      if (!res.canceled) setPhotoUri(res.assets[0]?.uri);
+      if (!res.canceled) {
+        const uri = res.assets[0]?.uri;
+        setValue("photoUri", uri);
+      }
     } catch {
       Alert.alert("Camera error", "Could not open camera. You can retry later.");
     }
   };
 
-  const handleSubmit = async () => {
-    setError(null);
-    if (!valid) {
-      setError("Please enter a name and non-negative quantity.");
-      return;
-    }
-    const q = Number(quantity);
+  const onFormSubmit = async (data: ItemFormData) => {
     await onSubmit({
-      name: name.trim(),
-      category: category.trim() || undefined,
-      quantity: q,
-      notes: notes.trim() || undefined,
-      photoUri,
+      name: data.name,
+      category: data.category || undefined,
+      quantity: data.quantity,
+      notes: data.notes || undefined,
+      photoUri: data.photoUri,
     });
   };
 
@@ -99,41 +104,81 @@ export default function ItemForm({
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View>
           <Text style={styles.label}>Name *</Text>
-          <TextInput value={name} onChangeText={setName} placeholder="Item name" style={styles.input} />
+          <Controller
+            control={control}
+            name="name"
+            render={({ field: { onChange, onBlur, value } }) => (
+              <TextInput
+                value={value}
+                onChangeText={onChange}
+                onBlur={onBlur}
+                placeholder="Item name"
+                style={[styles.input, errors.name && styles.inputError]}
+              />
+            )}
+          />
+          {errors.name && <Text style={styles.errorText}>{errors.name.message}</Text>}
         </View>
 
         <View>
           <Text style={styles.label}>Quantity *</Text>
-          <TextInput
-            value={quantity}
-            onChangeText={setQuantity}
-            keyboardType="numeric"
-            placeholder="0"
-            style={styles.input}
+          <Controller
+            control={control}
+            name="quantity"
+            render={({ field: { onChange, onBlur, value } }) => (
+              <TextInput
+                value={String(value)}
+                onChangeText={onChange}
+                onBlur={onBlur}
+                keyboardType="numeric"
+                placeholder="0"
+                style={[styles.input, errors.quantity && styles.inputError]}
+              />
+            )}
           />
+          {errors.quantity && <Text style={styles.errorText}>{errors.quantity.message}</Text>}
         </View>
 
         <View>
           <Text style={styles.label}>Category</Text>
-          <TextInput value={category} onChangeText={setCategory} placeholder="e.g. Groceries" style={styles.input} />
+          <Controller
+            control={control}
+            name="category"
+            render={({ field: { onChange, onBlur, value } }) => (
+              <TextInput
+                value={value}
+                onChangeText={onChange}
+                onBlur={onBlur}
+                placeholder="e.g. Groceries"
+                style={styles.input}
+              />
+            )}
+          />
         </View>
 
         <View>
           <Text style={styles.label}>Notes</Text>
-          <TextInput
-            value={notes}
-            onChangeText={setNotes}
-            placeholder="Optional notes"
-            multiline
-            style={styles.notesInput}
+          <Controller
+            control={control}
+            name="notes"
+            render={({ field: { onChange, onBlur, value } }) => (
+              <TextInput
+                value={value}
+                onChangeText={onChange}
+                onBlur={onBlur}
+                placeholder="Optional notes"
+                multiline
+                style={styles.notesInput}
+              />
+            )}
           />
         </View>
 
         <View style={styles.photoSection}>
           <Text style={styles.label}>Photo</Text>
 
-          {photoUri ? (
-            <Image source={{ uri: photoUri }} style={styles.photo} />
+          {watchedPhotoUri ? (
+            <Image source={{ uri: watchedPhotoUri }} style={styles.photo} />
           ) : (
             <Text style={styles.noPhoto}>No photo</Text>
           )}
@@ -147,20 +192,23 @@ export default function ItemForm({
               <Text style={styles.buttonText}>Pick</Text>
             </TouchableOpacity>
 
-            {photoUri && (
-              <TouchableOpacity onPress={() => setPhotoUri(undefined)} style={styles.removeButton}>
+            {watchedPhotoUri && (
+              <TouchableOpacity
+                onPress={() => {
+                  setValue("photoUri", undefined);
+                }}
+                style={styles.removeButton}
+              >
                 <Text style={styles.removeButtonText}>Remove</Text>
               </TouchableOpacity>
             )}
           </View>
         </View>
 
-        {error ? <Text style={styles.errorText}>{error}</Text> : null}
-
         <TouchableOpacity
-          onPress={handleSubmit}
-          disabled={!valid || busy}
-          style={[styles.submitButton, (!valid || busy) && styles.submitButtonDisabled]}
+          onPress={handleSubmit(onFormSubmit)}
+          disabled={!isValid || busy}
+          style={[styles.submitButton, (!isValid || busy) && styles.submitButtonDisabled]}
         >
           <Text style={styles.submitButtonText}>{submitLabel}</Text>
         </TouchableOpacity>
@@ -187,6 +235,9 @@ const styles = StyleSheet.create({
     borderColor: "#ddd",
     borderRadius: 8,
     padding: 12,
+  },
+  inputError: {
+    borderColor: "#dc2626",
   },
   notesInput: {
     borderWidth: 1,

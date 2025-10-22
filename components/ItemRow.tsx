@@ -49,23 +49,17 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 4,
   },
-  nameColumn: {
-    justifyContent: "flex-start",
-  },
-  categoryColumn: {
-    justifyContent: "flex-start",
-  },
+  nameColumn: {},
+  categoryColumn: {},
   quantityColumn: {
     flex: 0,
     width: 40,
-    justifyContent: "flex-start",
-  },
-  updatedColumn: {
-    justifyContent: "flex-start",
-  },
-  photoColumn: {
-    justifyContent: "center",
     alignItems: "center",
+  },
+  updatedColumn: {},
+  photoColumn: {
+    flex: 0,
+    width: 40,
   },
   text: {
     fontSize: 14,

@@ -2,7 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import randomID from "react-native-uuid";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
-import { Item, ItemId } from "../types";
+import { Draft, Item, ItemId, Patch } from "../types";
 import { MOCK_ITEMS } from "./constants";
 
 type ItemsState = {
@@ -13,8 +13,8 @@ type ItemsState = {
 
   // Actions
   hydrate: () => Promise<void>;
-  add: (draft: Omit<Item, "id" | "updatedAt">) => Promise<void>;
-  update: (id: ItemId, patch: Partial<Omit<Item, "id">>) => Promise<void>;
+  add: (draft: Draft) => Promise<void>;
+  update: (id: ItemId, patch: Patch) => Promise<void>;
   remove: (id: ItemId) => Promise<void>;
   setSort: (by: "name" | "updatedAt") => void;
   setSearch: (q: string) => void;

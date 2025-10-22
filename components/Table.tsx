@@ -90,7 +90,6 @@ const styles = StyleSheet.create({
   photoHeader: {
     flex: 0,
     width: 40,
-    alignItems: "center",
   },
   listContent: {
     paddingHorizontal: 8,

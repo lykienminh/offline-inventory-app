@@ -10,4 +10,10 @@ export interface Item {
   updatedAt: number; // epoch ms
 }
 
+// Draft type for creating new items
+export type Draft = Omit<Item, "id" | "updatedAt">;
+
+// Patch type for updating existing items
+export type Patch = Partial<Omit<Item, "id" | "updatedAt">>;
+
 export default {};
