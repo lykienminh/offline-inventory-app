@@ -1,6 +1,6 @@
 import useInventoryStore from "@/app/store/useItems";
 import ItemForm from "@/components/ItemForm";
-import { useRouter } from "expo-router";
+import { Stack, useRouter } from "expo-router";
 import React, { useState } from "react";
 import { View } from "react-native";
 
@@ -20,8 +20,16 @@ export default function NewItemScreen() {
   };
 
   return (
-    <View style={{ flex: 1 }}>
-      <ItemForm onSubmit={onSubmit} submitLabel="Create" busy={busy} />
-    </View>
+    <>
+      <Stack.Screen
+        options={{
+          title: "Add Item",
+          headerBackTitle: "Back",
+        }}
+      />
+      <View style={{ flex: 1 }}>
+        <ItemForm onSubmit={onSubmit} submitLabel="Create" busy={busy} />
+      </View>
+    </>
   );
 }

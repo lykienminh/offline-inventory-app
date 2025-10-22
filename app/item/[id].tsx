@@ -51,6 +51,7 @@ export default function EditItemScreen() {
       <Stack.Screen
         options={{
           title: "Edit Item",
+          headerBackTitle: "Back",
           headerRight: () => (
             <TouchableOpacity
               onPress={handleDelete}
