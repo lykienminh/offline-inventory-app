@@ -2,7 +2,7 @@ import useInventoryStore from "@/app/store/useItems";
 import ItemForm from "@/components/ItemForm";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import React, { useMemo, useState } from "react";
-import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Alert, Text, TouchableOpacity, View } from "react-native";
 
 export default function EditItemScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -56,14 +56,14 @@ export default function EditItemScreen() {
             <TouchableOpacity
               onPress={handleDelete}
               disabled={busy}
-              style={[styles.headerDeleteButton, busy && styles.headerDeleteButtonDisabled]}
+              className={`bg-red-600 px-3 py-1.5 rounded mr-2 ${busy ? 'bg-gray-400' : ''}`}
             >
-              <Text style={styles.headerDeleteButtonText}>Delete</Text>
+              <Text className="text-white font-semibold text-sm">Delete</Text>
             </TouchableOpacity>
           ),
         }}
       />
-      <View style={styles.container}>
+      <View className="flex-1">
         <ItemForm
           initial={{
             name: item.name,
@@ -80,24 +80,3 @@ export default function EditItemScreen() {
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  headerDeleteButton: {
-    backgroundColor: "#dc2626",
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 6,
-    marginRight: 8,
-  },
-  headerDeleteButtonDisabled: {
-    backgroundColor: "#9CA3AF",
-  },
-  headerDeleteButtonText: {
-    color: "#fff",
-    fontWeight: "600",
-    fontSize: 14,
-  },
-});

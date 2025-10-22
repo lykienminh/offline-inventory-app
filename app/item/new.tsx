@@ -27,7 +27,7 @@ export default function NewItemScreen() {
           headerBackTitle: "Back",
         }}
       />
-      <View style={{ flex: 1 }}>
+      <View className="flex-1">
         <ItemForm onSubmit={onSubmit} submitLabel="Create" busy={busy} />
       </View>
     </>

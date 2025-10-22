@@ -2,7 +2,7 @@ import useInventoryStore from "@/app/store/useItems";
 import Table from "@/components/Table";
 import { useRouter } from "expo-router";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { RefreshControl, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { RefreshControl, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function HomeScreen() {
@@ -50,21 +50,21 @@ export default function HomeScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView className="flex-1 bg-white">
       <ScrollView
-        style={styles.scroll}
+        className="flex-1"
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
         keyboardShouldPersistTaps="handled"
       >
-        <View style={styles.inner}>
-          <View style={styles.header}>
-            <Text style={styles.title}>Inventory</Text>
+        <View className="p-4 pt-6">
+          <View className="flex-row justify-between items-center mb-3">
+            <Text className="text-2xl font-extrabold">Inventory</Text>
             <TouchableOpacity
               onPress={() => router.push("/item/new")}
-              style={styles.addButton}
+              className="bg-blue-600 py-2.5 px-3.5 rounded-lg"
               accessibilityRole="button"
             >
-              <Text style={styles.addButtonText}>Add</Text>
+              <Text className="text-white font-bold">Add</Text>
             </TouchableOpacity>
           </View>
 
@@ -72,12 +72,12 @@ export default function HomeScreen() {
             placeholder="Search by name"
             value={inputValue}
             onChangeText={handleSearchChange}
-            style={styles.searchInput}
+            className="border border-gray-300 rounded-lg p-3"
           />
 
-          <View style={styles.spacer} />
+          <View className="h-4" />
 
-          <View style={styles.tableWrapper}>
+          <View className="flex-1">
             <Table onPressRow={(item) => router.push({ pathname: "/item/[id]", params: { id: item.id } })} />
           </View>
         </View>
@@ -85,49 +85,3 @@ export default function HomeScreen() {
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "white",
-  },
-  scroll: {
-    flex: 1,
-  },
-  inner: {
-    padding: 16,
-    paddingTop: 24,
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 12,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: "800",
-  },
-  addButton: {
-    backgroundColor: "#2563EB",
-    paddingVertical: 10,
-    paddingHorizontal: 14,
-    borderRadius: 8,
-  },
-  addButtonText: {
-    color: "#fff",
-    fontWeight: "700",
-  },
-  searchInput: {
-    borderColor: "#ddd",
-    borderWidth: 1,
-    borderRadius: 10,
-    padding: 12,
-  },
-  spacer: {
-    height: 16,
-  },
-  tableWrapper: {
-    flex: 1,
-  },
-});

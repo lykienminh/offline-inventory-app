@@ -1,6 +1,6 @@
 import useInventoryStore from "@/app/store/useItems";
 import { Item } from "@/app/types";
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import ItemRow from "./ItemRow";
 
@@ -81,7 +81,7 @@ const styles = StyleSheet.create({
   },
   headerText: {
     fontWeight: "700",
-    fontSize: 16,
+    fontSize: 15,
   },
   nameHeader: {},
   categoryHeader: {},
